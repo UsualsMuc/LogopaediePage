@@ -15,20 +15,28 @@ export function ContactForm() {
 
     const form = event.currentTarget;
     const formData = new FormData(form);
+    const requestBody = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      message: formData.get("message")
+    };
+
+    console.log("[contact-form] outgoing request", requestBody);
 
     const response = await fetch("/api/contact", {
       method: "POST",
-      body: JSON.stringify({
-        name: formData.get("name"),
-        email: formData.get("email"),
-        message: formData.get("message")
-      }),
+      body: JSON.stringify(requestBody),
       headers: {
         "Content-Type": "application/json"
       }
     });
 
     const payload = (await response.json()) as { error?: string; message?: string };
+    console.log("[contact-form] response", {
+      ok: response.ok,
+      payload,
+      status: response.status
+    });
 
     if (!response.ok) {
       setStatus("error");

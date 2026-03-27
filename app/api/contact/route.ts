@@ -1,14 +1,24 @@
 import { Resend } from "resend";
 
-const resendApiKey = process.env.RESEND_API_KEY;
-const fromEmail = process.env.CONTACT_FROM_EMAIL;
-const toEmail = process.env.CONTACT_TO_EMAIL;
+export const dynamic = "force-dynamic";
 
-console.log("[contact] route loaded env values", {
-  CONTACT_FROM_EMAIL: process.env.CONTACT_FROM_EMAIL ?? "MISSING",
-  CONTACT_TO_EMAIL: process.env.CONTACT_TO_EMAIL ?? "MISSING",
+const resendApiKey = process.env.RESEND_API_KEY;
+const senderEmail = process.env.CONTACT_FROM_EMAIL;
+const recipientEmail = process.env.CONTACT_TO_EMAIL;
+
+  console.log("[contact] route loaded env values", {
+    CONTACT_FROM_EMAIL: process.env.CONTACT_FROM_EMAIL ?? "MISSING",
+    CONTACT_TO_EMAIL: process.env.CONTACT_TO_EMAIL ?? "MISSING",
   RESEND_API_KEY: process.env.RESEND_API_KEY ?? "MISSING"
 });
+
+process.stdout.write(
+  `[contact] route loaded env values stdout ${JSON.stringify({
+    CONTACT_FROM_EMAIL: process.env.CONTACT_FROM_EMAIL ?? "MISSING",
+    CONTACT_TO_EMAIL: process.env.CONTACT_TO_EMAIL ?? "MISSING",
+    RESEND_API_KEY: process.env.RESEND_API_KEY ?? "MISSING"
+  })}\n`
+);
 
 function escapeHtml(value: string) {
   return value
@@ -28,6 +38,14 @@ export async function POST(request: Request) {
 
   const rawBody = await request.text();
   console.log("[contact] raw request body", rawBody);
+  process.stdout.write(
+    `[contact] request debug ${JSON.stringify({
+      CONTACT_FROM_EMAIL: process.env.CONTACT_FROM_EMAIL ?? "MISSING",
+      CONTACT_TO_EMAIL: process.env.CONTACT_TO_EMAIL ?? "MISSING",
+      RESEND_API_KEY: process.env.RESEND_API_KEY ?? "MISSING",
+      rawBody
+    })}\n`
+  );
 
   let body: {
     email?: string;
@@ -43,15 +61,23 @@ export async function POST(request: Request) {
     };
   } catch (error) {
     console.error("[contact] invalid json body", error);
+    process.stderr.write(`[contact] invalid json body ${String(error)}\n`);
     return Response.json({ error: "Ungueltige Anfrage." }, { status: 400 });
   }
 
-  if (!resendApiKey || !fromEmail || !toEmail) {
+  if (!resendApiKey || !senderEmail || !recipientEmail) {
     console.error("[contact] Missing env configuration", {
-      hasContactFromEmail: Boolean(fromEmail),
-      hasContactToEmail: Boolean(toEmail),
+      hasContactFromEmail: Boolean(senderEmail),
+      hasContactToEmail: Boolean(recipientEmail),
       hasResendApiKey: Boolean(resendApiKey)
     });
+    process.stderr.write(
+      `[contact] missing env configuration ${JSON.stringify({
+        hasContactFromEmail: Boolean(senderEmail),
+        hasContactToEmail: Boolean(recipientEmail),
+        hasResendApiKey: Boolean(resendApiKey)
+      })}\n`
+    );
 
     return Response.json(
       {
@@ -95,13 +121,13 @@ export async function POST(request: Request) {
 
   try {
     console.info("[contact] Sending email via Resend", {
-      fromEmail,
-      toEmail
+      recipientEmail,
+      senderEmail
     });
 
     const { error } = await resend.emails.send({
-      from: fromEmail,
-      to: [toEmail],
+      from: senderEmail,
+      to: [recipientEmail],
       replyTo: email,
       subject: `Neue Novaro Anfrage von ${name}`,
       html: `
@@ -117,19 +143,21 @@ export async function POST(request: Request) {
 
     if (error) {
       console.error("[contact] Resend returned an error", error);
+      process.stderr.write(`[contact] resend error ${JSON.stringify(error)}\n`);
 
       return Response.json({ error: "Der Versand ist fehlgeschlagen." }, { status: 500 });
     }
 
     console.info("[contact] Email sent successfully", {
-      fromEmail,
+      recipientEmail,
       replyTo: email,
-      toEmail
+      senderEmail
     });
 
     return Response.json({ message: "Die Nachricht wurde versendet." });
   } catch (error) {
     console.error("[contact] Unexpected error while sending email", error);
+    process.stderr.write(`[contact] unexpected error ${String(error)}\n`);
 
     return Response.json({ error: "Der Versand ist fehlgeschlagen." }, { status: 500 });
   }
