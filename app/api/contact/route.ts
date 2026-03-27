@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 export const dynamic = "force-dynamic";
 
 const gmailUser = process.env.GMAIL_USER;
-const gmailAppPassword = process.env.GMAIL_APP_PASSWORD;
+const gmailAppPassword = process.env.GMAIL_APP_PASSWORD?.replace(/\s+/g, "");
 const recipientEmail = process.env.CONTACT_TO_EMAIL;
 
 console.log("[contact] route loaded env values", {
