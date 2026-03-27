@@ -15,6 +15,12 @@ function escapeHtml(value: string) {
 
 export async function POST(request: Request) {
   if (!resendApiKey || !fromEmail || !toEmail) {
+    console.error("[contact] Missing env configuration", {
+      hasContactFromEmail: Boolean(fromEmail),
+      hasContactToEmail: Boolean(toEmail),
+      hasResendApiKey: Boolean(resendApiKey)
+    });
+
     return Response.json(
       {
         error:
@@ -34,19 +40,39 @@ export async function POST(request: Request) {
   const email = body.email?.toString().trim();
   const message = body.message?.toString().trim();
 
+  console.info("[contact] Incoming contact request", {
+    email,
+    hasMessage: Boolean(message),
+    messageLength: message?.length ?? 0,
+    name
+  });
+
   if (!name || !email || !message) {
+    console.warn("[contact] Validation failed: missing fields", {
+      hasEmail: Boolean(email),
+      hasMessage: Boolean(message),
+      hasName: Boolean(name)
+    });
+
     return Response.json({ error: "Bitte alle Felder ausfullen." }, { status: 400 });
   }
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailPattern.test(email)) {
+    console.warn("[contact] Validation failed: invalid email", { email });
+
     return Response.json({ error: "Bitte eine gueltige E-Mail-Adresse eingeben." }, { status: 400 });
   }
 
   const resend = new Resend(resendApiKey);
 
   try {
+    console.info("[contact] Sending email via Resend", {
+      fromEmail,
+      toEmail
+    });
+
     const { error } = await resend.emails.send({
       from: fromEmail,
       to: [toEmail],
@@ -64,11 +90,21 @@ export async function POST(request: Request) {
     });
 
     if (error) {
+      console.error("[contact] Resend returned an error", error);
+
       return Response.json({ error: "Der Versand ist fehlgeschlagen." }, { status: 500 });
     }
 
+    console.info("[contact] Email sent successfully", {
+      fromEmail,
+      replyTo: email,
+      toEmail
+    });
+
     return Response.json({ message: "Die Nachricht wurde versendet." });
-  } catch {
+  } catch (error) {
+    console.error("[contact] Unexpected error while sending email", error);
+
     return Response.json({ error: "Der Versand ist fehlgeschlagen." }, { status: 500 });
   }
 }

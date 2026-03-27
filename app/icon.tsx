@@ -13,7 +13,7 @@ export default function Icon() {
       <div
         style={{
           alignItems: "center",
-          background: "linear-gradient(180deg, #fff7ec 0%, #ffe7d3 100%)",
+          background: "linear-gradient(180deg, #f8f3ec 0%, #e8f1ee 100%)",
           display: "flex",
           height: "100%",
           justifyContent: "center",
@@ -23,39 +23,27 @@ export default function Icon() {
       >
         <div
           style={{
-            background: "#2f8c88",
-            borderRadius: "9999px",
-            bottom: "10px",
-            boxShadow: "0 0 0 4px rgba(255,255,255,0.6)",
-            height: "28px",
-            position: "absolute",
-            width: "28px"
+            background: "linear-gradient(180deg, #d06f46 0%, #b85b35 100%)",
+            borderRadius: "18px",
+            boxShadow: "0 10px 24px rgba(22,49,59,0.18)",
+            display: "flex",
+            height: "46px",
+            justifyContent: "center",
+            width: "46px"
           }}
-        />
-        <div
-          style={{
-            background: "#d7642b",
-            borderRadius: "9999px",
-            height: "10px",
-            position: "absolute",
-            right: "15px",
-            top: "14px",
-            transform: "rotate(-25deg)",
-            width: "10px"
-          }}
-        />
-        <div
-          style={{
-            background: "linear-gradient(90deg, rgba(215,100,43,0), rgba(215,100,43,0.9))",
-            borderRadius: "9999px",
-            height: "4px",
-            position: "absolute",
-            right: "20px",
-            top: "18px",
-            transform: "rotate(-25deg)",
-            width: "22px"
-          }}
-        />
+        >
+          <div
+            style={{
+              color: "#fffaf4",
+              fontSize: 28,
+              fontWeight: 700,
+              lineHeight: 1,
+              marginTop: 7
+            }}
+          >
+            N
+          </div>
+        </div>
       </div>
     ),
     size
