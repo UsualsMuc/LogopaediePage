@@ -4,6 +4,12 @@ const resendApiKey = process.env.RESEND_API_KEY;
 const fromEmail = process.env.CONTACT_FROM_EMAIL;
 const toEmail = process.env.CONTACT_TO_EMAIL;
 
+console.log("[contact] route loaded env values", {
+  CONTACT_FROM_EMAIL: process.env.CONTACT_FROM_EMAIL ?? "MISSING",
+  CONTACT_TO_EMAIL: process.env.CONTACT_TO_EMAIL ?? "MISSING",
+  RESEND_API_KEY: process.env.RESEND_API_KEY ?? "MISSING"
+});
+
 function escapeHtml(value: string) {
   return value
     .replaceAll("&", "&amp;")
@@ -20,6 +26,26 @@ export async function POST(request: Request) {
     RESEND_API_KEY: process.env.RESEND_API_KEY ?? "MISSING"
   });
 
+  const rawBody = await request.text();
+  console.log("[contact] raw request body", rawBody);
+
+  let body: {
+    email?: string;
+    message?: string;
+    name?: string;
+  };
+
+  try {
+    body = JSON.parse(rawBody) as {
+      email?: string;
+      message?: string;
+      name?: string;
+    };
+  } catch (error) {
+    console.error("[contact] invalid json body", error);
+    return Response.json({ error: "Ungueltige Anfrage." }, { status: 400 });
+  }
+
   if (!resendApiKey || !fromEmail || !toEmail) {
     console.error("[contact] Missing env configuration", {
       hasContactFromEmail: Boolean(fromEmail),
@@ -35,12 +61,6 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-
-  const body = (await request.json()) as {
-    email?: string;
-    message?: string;
-    name?: string;
-  };
 
   const name = body.name?.toString().trim();
   const email = body.email?.toString().trim();
