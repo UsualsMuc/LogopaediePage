@@ -14,6 +14,12 @@ function escapeHtml(value: string) {
 }
 
 export async function POST(request: Request) {
+  console.log("[contact] process.env values", {
+    CONTACT_FROM_EMAIL: process.env.CONTACT_FROM_EMAIL ?? "MISSING",
+    CONTACT_TO_EMAIL: process.env.CONTACT_TO_EMAIL ?? "MISSING",
+    RESEND_API_KEY: process.env.RESEND_API_KEY ?? "MISSING"
+  });
+
   if (!resendApiKey || !fromEmail || !toEmail) {
     console.error("[contact] Missing env configuration", {
       hasContactFromEmail: Boolean(fromEmail),
