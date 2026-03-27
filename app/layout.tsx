@@ -10,9 +10,9 @@ import "@fontsource/plus-jakarta-sans/700.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Novaro | Speaking Confidence for Growing Voices",
+  title: "Novaro | Fantasiegestützte Logopädie",
   description:
-    "Novaro helps children stay connected to their dreams through speaking experiences that build confidence, imagination, and expression."
+    "Novaro erleichtert Logopädinnen und Logopäden die Arbeit mit modernen, fantasiegestützten Lernressourcen für Kinder."
 };
 
 export default function RootLayout({
@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="de">
       <body>
         {children}
         <Analytics />

@@ -2,6 +2,7 @@ import { Resend } from "resend";
 
 const resendApiKey = process.env.RESEND_API_KEY;
 const fromEmail = process.env.CONTACT_FROM_EMAIL;
+const toEmail = process.env.CONTACT_TO_EMAIL;
 
 function escapeHtml(value: string) {
   return value
@@ -13,11 +14,11 @@ function escapeHtml(value: string) {
 }
 
 export async function POST(request: Request) {
-  if (!resendApiKey || !fromEmail) {
+  if (!resendApiKey || !fromEmail || !toEmail) {
     return Response.json(
       {
         error:
-          "Die E-Mail-Funktion ist noch nicht konfiguriert. Bitte RESEND_API_KEY und CONTACT_FROM_EMAIL setzen."
+          "Die E-Mail-Funktion ist noch nicht konfiguriert. Bitte RESEND_API_KEY, CONTACT_FROM_EMAIL und CONTACT_TO_EMAIL setzen."
       },
       { status: 500 }
     );
@@ -37,12 +38,18 @@ export async function POST(request: Request) {
     return Response.json({ error: "Bitte alle Felder ausfullen." }, { status: 400 });
   }
 
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailPattern.test(email)) {
+    return Response.json({ error: "Bitte eine gueltige E-Mail-Adresse eingeben." }, { status: 400 });
+  }
+
   const resend = new Resend(resendApiKey);
 
   try {
     const { error } = await resend.emails.send({
       from: fromEmail,
-      to: ["novaro-build@gmail.com"],
+      to: [toEmail],
       replyTo: email,
       subject: `Neue Novaro Anfrage von ${name}`,
       html: `

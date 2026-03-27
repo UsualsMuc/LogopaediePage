@@ -41,21 +41,17 @@ export function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-white/90 backdrop-blur">
-      <div className="mx-auto flex w-full max-w-[88rem] items-center justify-between px-4 py-4 sm:px-6 lg:px-10">
+    <header className="sticky top-0 z-50 border-b border-line bg-[rgba(248,244,238,0.82)] backdrop-blur">
+      <div className="relative mx-auto flex w-full max-w-[88rem] items-center justify-between px-4 py-4 sm:px-6 lg:px-10">
         <a href="#top" className="font-display text-3xl text-foreground">
           Novaro
         </a>
-        
-        {/* Desktop Nav */}
-        <nav className="hidden gap-6 text-sm font-semibold text-muted md:flex">
-          <a href="#uberblick">Uberblick</a>
-          <a href="#fantasie">Fantasie</a>
-          <a href="#bewegung">Bewegung</a>
-          <a href="#sicherheit">Sicherheit</a>
+
+        <nav className="absolute left-1/2 hidden -translate-x-1/2 gap-6 text-sm font-semibold text-muted md:flex">
+          <a href="#funktioniert">Wie es funktioniert</a>
           <a href="#kontakt">Kontakt</a>
         </nav>
-        
+
         <div className="flex items-center gap-4">
           <a
             href="#kontakt"
@@ -63,11 +59,10 @@ export function Header() {
           >
             Anfragen
           </a>
-          
-          {/* Mobile Menu Toggle */}
+
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden flex p-2 text-foreground"
+            className="flex p-2 text-foreground md:hidden"
             aria-label="Toggle menu"
           >
             {isOpen ? <XIcon /> : <MenuIcon />}
@@ -75,19 +70,19 @@ export function Header() {
         </div>
       </div>
 
-      {/* Mobile Nav Overlay */}
       {isOpen && (
-        <div className="md:absolute top-full left-0 right-0 border-t border-line bg-white px-4 py-4 shadow-lg">
+        <div className="left-0 right-0 top-full border-t border-line bg-[rgba(248,244,238,0.96)] px-4 py-4 shadow-lg md:absolute">
           <nav className="flex flex-col gap-4 text-base font-semibold text-foreground">
-            <a href="#uberblick" onClick={() => setIsOpen(false)}>Uberblick</a>
-            <a href="#fantasie" onClick={() => setIsOpen(false)}>Fantasie</a>
-            <a href="#bewegung" onClick={() => setIsOpen(false)}>Bewegung</a>
-            <a href="#sicherheit" onClick={() => setIsOpen(false)}>Sicherheit</a>
-            <a href="#kontakt" onClick={() => setIsOpen(false)}>Kontakt</a>
+            <a href="#funktioniert" onClick={() => setIsOpen(false)}>
+              Wie es funktioniert
+            </a>
+            <a href="#kontakt" onClick={() => setIsOpen(false)}>
+              Kontakt
+            </a>
             <a
               href="#kontakt"
               onClick={() => setIsOpen(false)}
-              className="mt-2 inline-flex justify-center rounded-full bg-brand w-full px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#c15b29]"
+              className="mt-2 inline-flex w-full justify-center rounded-full bg-brand px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#c15b29]"
             >
               Anfragen
             </a>
